@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+function makeListItems(key, val) {
+	// Function found through sample code.
+	var items = [];
+	items.push('<b>' + key + '</b><br>');
+	$.each(val, function(key, val) {
+		if (typeof(val) == 'object') {
+			items.push(makeListItems(key, val));
+		} else {
+			items.push(key + ': ' + val + '<br>');
+		}
+	});
+	items.push('</ul></li>');
+	return items.join('');
+}
+var lenderID = "matt" 
+var lendersite = "http://api.kivaws.org/v1/lenders/" + lenderID+"/loans.json" //URL for lender JSON data
+$.getJSON(lendersite, function( data ){
+	var items = [];
+	var title="Loan";
+	items.push(makeListItems(title, data.loans));
+	var element = []; //Separate each line into a different element in an array
+	entries = items[0].split("<br>")
+	countries = [];
+	for (i=0;i<entries.length;i++) {
+		if (entries[i].indexOf(": ") == -1) {
+		}
+		else {
+			//document.write(entries[i] + "<br>") //debugging
+			row = entries[i].split(": ")
+			if (row[0]=="country"){
+				countries.push(row[1])
+				document.write(row[1] + "<br>")
+			}
+		}
+	}
+	document.write("End of List")
+	
+	
+});
+
+</script>
+</head>
+<body>
+</body>
+</html>
