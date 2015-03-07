@@ -1,29 +1,4 @@
-if (Meteor.isClient) {
-    var lender = "markhp";
-    Template.body.events({
-    "submit .lender": function (event) {
-        // This function is called when the new task form is submitted
-
-        lender = event.target.text.value;
-        // Clear form
-        event.target.text.value = "";
-        }
-    });
-    /* from https://github.com/kiva/API/blob/master/code/js/api/kiva.js */  
-    function getParameterByName(name) {
-        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-        var regexS = "[\\?&]" + name + "=([^&#]*)";
-        var regex = new RegExp(regexS);
-        var results = regex.exec(window.location.search);
-
-        if (results == null) {
-            return "";
-        } else {
-            return decodeURIComponent(results[1].replace(/\+/g, " "));
-        }
-    }
-
-    function makeListItems(key, val) {
+function makeListItems(key, val) {
         var items = [];
 
         items.push('<li><b>' + key + '</b><ul>');
@@ -41,13 +16,21 @@ if (Meteor.isClient) {
         return items.join('');
     }
 
+if (Meteor.isClient) {
+    var lender = "markhp";
+    Template.body.events({
+        "submit .lenders": function (event) {
+            // This function is called when the new task form is submitted
+            lender = event.target.text.value;
+            
+            // Clear form
+            event.target.text.value = "";
+        }
+        });
+    
+    console.log(lender);
     var page = '';
     var loan_id = 'text';
-
-    // Get page parameter from URL
-    if (page = getParameterByName('page')) {
-        page = '&page='+page;
-    }
 
     url = 'http://api.kivaws.org/v1/lenders/' + lender +'/loans.json';
     title = 'Loan';
@@ -82,6 +65,7 @@ if (Meteor.isClient) {
             $(this).wrapInner('<a href="index.html?loan_id='+$(this).text().substring(4,$(this).text().length)+'" />');
             });
     });
+
 };
 
 
