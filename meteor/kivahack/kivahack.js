@@ -1,6 +1,14 @@
 if (Meteor.isClient) {
     var lender = "markhp";
+    Template.body.events({
+    "submit .lender": function (event) {
+        // This function is called when the new task form is submitted
 
+        lender = event.target.text.value;
+        // Clear form
+        event.target.text.value = "";
+        }
+    });
     /* from https://github.com/kiva/API/blob/master/code/js/api/kiva.js */  
     function getParameterByName(name) {
         name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
