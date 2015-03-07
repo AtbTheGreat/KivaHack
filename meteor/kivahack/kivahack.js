@@ -1,82 +1,91 @@
 if (Meteor.isClient) {
-  function getParameterByName(name) {
-	name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-	var regexS = "[\\?&]" + name + "=([^&#]*)";
-	var regex = new RegExp(regexS);
-	var results = regex.exec(window.location.search);
+    var lender = 'markhp';
+    Template.body.events({
+        "submit .lenders": function (event) {
+            // This function is called when the lender search form is submitted
+            lender = event.target.text.value;
+            // Clear form
+            event.target.text.value = "";
 
-	if (results == null) {
-		return "";
-	} else {
-		return decodeURIComponent(results[1].replace(/\+/g, " "));
-	}
-}
+            // Prevent default form submit
+            return false;
+        }
+    
+    /* from https://github.com/kiva/API/blob/master/code/js/api/kiva.js */  
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.search);
 
-function makeListItems(key, val) {
-	var items = [];
+        if (results == null) {
+            return "";
+        } else {
+            return decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+    }
 
-	items.push('<li><b>' + key + '</b><ul>');
+    function makeListItems(key, val) {
+        var items = [];
 
-	$.each(val, function(key, val) {
-		if (typeof(val) == 'object') {
-			items.push(makeListItems(key, val));
-		} else {
-			items.push('<li class="' + key + '">' + key + ': ' + val + '</li>');
-		}
-	});
+        items.push('<li><b>' + key + '</b><ul>');
 
-	items.push('</ul></li>');
+        $.each(val, function(key, val) {
+            if (typeof(val) == 'object') {
+                items.push(makeListItems(key, val));
+            } else {
+                items.push('<li class="' + key + '">' + key + ': ' + val + '</li>');
+            }
+        });
 
-	return items.join('');
-}
+        items.push('</ul></li>');
 
-	var page = '';
-	var loan_id = '';
+        return items.join('');
+    }
 
-	// Get page parameter from URL
-	if (page = getParameterByName('page')) {
-		page = '&page='+page;
-	}
+    var page = '';
+    var loan_id = 'text';
 
-	// Is this a request for an individual loan?
-	if (loan_id = getParameterByName('loan_id')) {
-		url = 'http://api.kivaws.org/v1/loans/'+loan_id+'.json';
-		title = 'Loan';
-	} else {
-		url ='http://api.kivaws.org/v1/loans/newest.json';
-		title = 'Loans';
-	}
+    // Get page parameter from URL
+    if (page = getParameterByName('page')) {
+        page = '&page='+page;
+    }
 
-	// Request loan data
-	$.getJSON(url+page, function(data) {
-		var items = [];
+    url = 'http://api.kivaws.org/v1/lenders/' + lender +'/loans.json';
+    title = 'Loan';
 
-		// Build the list
-		items.push('<ul>');
-		items.push(makeListItems(title, data.loans));
-		items.push('</ul>');
+        // Request loan data
+        $.getJSON(url, function(data) {
+            $('#content').append(data.loans);
+            var items = [];
 
-		$('#content').html(items.join(''));
+            // Build the list
+            items.push('<ul>');
+            items.push(makeListItems(title, data.loans));
+            items.push('</ul>');
 
-		// Pagination
-		var prev_page = '';
-		if (data.paging.page > 1) {
-			prev_page = '<a href="index.html?page='+(data.paging.page-1)+'">Previous Page</a>';
-		}
+            $('#content').html(items.join(''));
 
-		var next_page = '';
-		if (data.paging.page < data.paging.pages) {
-			next_page = '<a href="index.html?page='+(data.paging.page+1)+'">Next Page</a>';
-		}
+            // Pagination
+            var prev_page = '';
+            if (data.paging.page > 1) {
+                prev_page = '<a href="index.html?page='+(data.paging.page-1)+'">Previous Page</a>';
+            }
 
-		$('<div/>').html(prev_page+' '+data.paging.page+' of '+data.paging.pages+' '+next_page)
-			.appendTo('#content');
+            var next_page = '';
+            if (data.paging.page < data.paging.pages) {
+                next_page = '<a href="index.html?page='+(data.paging.page+1)+'">Next Page</a>';
+            }
 
-		// Create links to loan pages
-		$('.id').each(function () {
-			$(this).wrapInner('<a href="index.html?loan_id='+$(this).text().substring(4,$(this).text().length)+'" />');
-		});
-	});
+            $('<div/>').html(prev_page+' '+data.paging.page+' of '+data.paging.pages+' '+next_page)
+                .appendTo('#content');
+
+            // Create links to loan pages
+            $('.id').each(function () {
+                $(this).wrapInner('<a href="index.html?loan_id='+$(this).text().substring(4,$(this).text().length)+'" />');
+            });
+        });
+});
 }
 
 if (Meteor.isServer) {
