@@ -1,5 +1,4 @@
 
-
 function makeListItems(key, val) {
         var items = [];
 
@@ -52,8 +51,6 @@ if (Meteor.isClient) {
     var page = '';
     var loan_id = 'text';
 
-    url = 'http://api.kivaws.org/v1/lenders/' + lender +'/loans.json';
-    title = 'Loan';
 
     // Request loan data
     $.getJSON(url, function(data) {
