@@ -1,3 +1,5 @@
+
+
 function makeListItems(key, val) {
         var items = [];
 
@@ -17,18 +19,36 @@ function makeListItems(key, val) {
     }
 
 if (Meteor.isClient) {
-    var lender = "markhp";
+    var lender = "";
+    var search_url = "";
+    var options = {};
+    var query_params  = {};
     Template.body.events({
         "submit .lenders": function (event) {
             // This function is called when the new task form is submitted
             lender = event.target.text.value;
-            
+            console.log(event.target.text.value);
+            console.log("Lenders")
             // Clear form
             event.target.text.value = "";
+        },
+        "submit .searchname": function(event) {
+            Session.set("stringSearched", event.target.q.value);
+            search_url = 'http://api.kivaws.org/v1/lenders/search.json';
+            query_params = { q: Session.get("stringSearched"),
+                                sort_by: "newest",
+                                ids_only: "false"
+                                };
+            options = {
+                data: query_params,
+                type: "GET",
+                dataType: 'json'
+            }
+            request = jQuery.ajax(search_url, options).done(showResponse);
+            return false;
         }
         });
-    
-    console.log(lender);
+
     var page = '';
     var loan_id = 'text';
 
@@ -54,7 +74,7 @@ if (Meteor.isClient) {
 
         var next_page = '';
         if (data.paging.page < data.paging.pages) {
-            next_page = '<a href="index.html?page='+(data.paging.page+1)+'">Next Page</a>';
+            next_page = '<a"test" href="index.html?page='+(data.paging.page+1)+'">Next Page</a>';
             }
 
         $('<div/>').html(prev_page+' '+data.paging.page+' of '+data.paging.pages+' '+next_page)
@@ -65,6 +85,18 @@ if (Meteor.isClient) {
             $(this).wrapInner('<a href="index.html?loan_id='+$(this).text().substring(4,$(this).text().length)+'" />');
             });
     });
+    
+
+    
+            function showResponse (response) {
+            RESPONSE = response;
+            if (this && this.url && (typeof(this.url) == "string")) {
+                var anchor = jQuery("#url");
+                anchor.text(this.url.toString());
+                anchor.attr('href', this.url.toString());
+            }
+            jQuery("#content").text(JSON.stringify(response, null, '  '));
+        }
 
 };
 
