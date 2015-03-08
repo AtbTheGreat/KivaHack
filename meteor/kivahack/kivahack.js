@@ -17,7 +17,8 @@ function makeListItems(key, val) {
     }
 
 if (Meteor.isClient) {
-    var lender = "markhp";
+    var lender = "";
+    var q = "";
     Template.body.events({
         "submit .lenders": function (event) {
             // This function is called when the new task form is submitted
@@ -25,6 +26,10 @@ if (Meteor.isClient) {
             
             // Clear form
             event.target.text.value = "";
+        },
+        "search .searchname": function(event) {
+            q = event.taget.text.value;
+            console.log(q)
         }
         });
     
@@ -65,6 +70,21 @@ if (Meteor.isClient) {
             $(this).wrapInner('<a href="index.html?loan_id='+$(this).text().substring(4,$(this).text().length)+'" />');
             });
     });
+    
+
+    var search_url = 'http://api.kivaws.org/v1/lenders/search.json';
+    var query_params = { q: q};
+    var options = {
+        data: query_params,
+        type: "GET",
+        dataType: 'jsonp'
+    }
+    var request = jQuery.ajax({
+        url: search_url,
+        dataType: 'json', //json data type
+        data: query_params
+    });
+    console.log(request)
 
 };
 
