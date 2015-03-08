@@ -17,7 +17,7 @@ function makeListItems(key, val) {
     }
 
 if (Meteor.isClient) {
-    var lender = "markhp";
+    lender = "jeremy";
     Template.body.events({
         "submit .lenders": function (event) {
             // This function is called when the new task form is submitted
