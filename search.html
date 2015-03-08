@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+
+var lendersList = [];
+
+function makeListItems(key, val) {
+	// Function found through sample code.
+	var items = [];
+	items.push('<b>' + key + '</b><br>');
+	$.each(val, function(key, val) {
+		if (typeof(val) == 'object') {
+			items.push(makeListItems(key, val));
+		} else {
+			items.push(key + ': ' + val + '<br>');
+		}
+	});
+	items.push('</ul></li>');
+	return items.join('');
+}
+
+function indexWord(array, row){
+	
+	for(var i = 0; i < array.length; i++){
+		if(array[i] == row) return i;
+	
+	}
+	
+	return -1;
+}
+
+var name = "matt" 
+var lendersite = "http://api.kivaws.org/v1/lenders/search.json?q="+name //URL for lender JSON data
+
+// Making the getJSON method not asynchronous
+$.ajaxSetup({
+async: false
+});
+
+$.getJSON(lendersite, function( data ){
+	var items = [];
+	var title="Lenders";
+	items.push(makeListItems(title, data.lenders));
+	//document.write(items[0])
+//	var element = []; //Separate each line into a different element in an array
+	entries = items[0].split("<br>");
+	for (i=0;i<entries.length;i++) {
+	//document.write(entries[i]+'<br>');
+				var lenderName;
+				var lenderID;
+				var lenderWhere;
+				
+			
+			if (entries[i].indexOf(": ") !== -1) {
+				var row = entries[i].split(": ");
+				if(row[0] == "lender_id" ){
+					lenderID = row[1];
+				}
+				else if(row[0] == "name"){
+					lenderName = row[1];
+				}
+				else if (row[0]!=="id" && row[0]!=="uid" && row[0]!=="template_id" && row[0]!=="country_code"){ // whereabouts
+					if(row[1].length  < 1) lenderWhere = "N/A";
+					else lenderWhere = row[1];
+				}
+				var str = lenderName+", "+lenderWhere+", "+lenderID;
+				if(str.indexOf("undefined") == -1 && indexWord(lendersList, str)==-1){
+					lendersList.push(str);
+				}
+			}
+	} // end of for-loop
+	
+		for(var i = 0; i < lendersList.length; i++) document.write(lendersList[i]+"<br>");
+	
+	
+      }
+	
+
+);
+
+
+</script>
+</head>
+<body>
+<div id="regions_div" <!--style="width: 1800px; height: 1000px;"-->></div>
+
+</body>
+</html>
