@@ -1,3 +1,5 @@
+Searches = new Mongo.Collection("searches");
+
 function makeListItems(key, val) {
         var items = [];
 
@@ -18,7 +20,7 @@ function makeListItems(key, val) {
 
 if (Meteor.isClient) {
     var lender = "";
-    var q = "";
+    var q_text = "";
     Template.body.events({
         "submit .lenders": function (event) {
             // This function is called when the new task form is submitted
@@ -28,10 +30,10 @@ if (Meteor.isClient) {
             event.target.text.value = "";
         },
         "search .searchname": function(event) {
-            q = event.taget.text.value;
-            console.log(q)
+            Searches.insert({q_text: event.taget.q.value});
         }
         });
+    console.log(q_text)
     
     console.log(lender);
     var page = '';
@@ -59,7 +61,7 @@ if (Meteor.isClient) {
 
         var next_page = '';
         if (data.paging.page < data.paging.pages) {
-            next_page = '<a href="index.html?page='+(data.paging.page+1)+'">Next Page</a>';
+            next_page = '<a"test" href="index.html?page='+(data.paging.page+1)+'">Next Page</a>';
             }
 
         $('<div/>').html(prev_page+' '+data.paging.page+' of '+data.paging.pages+' '+next_page)
@@ -73,18 +75,28 @@ if (Meteor.isClient) {
     
 
     var search_url = 'http://api.kivaws.org/v1/lenders/search.json';
-    var query_params = { q: q};
+    q_id = Searches.find()
+    Searches.remove({})
+    var query_params = { q: q_id,
+                        sort_by: "newest",
+                        ids_only: "false"
+                       };
+    console.log(q_text)
     var options = {
         data: query_params,
         type: "GET",
-        dataType: 'jsonp'
+        dataType: 'json'
     }
-    var request = jQuery.ajax({
-        url: search_url,
-        dataType: 'json', //json data type
-        data: query_params
-    });
-    console.log(request)
+    var request = jQuery.ajax(search_url, options).done(showResponse);
+            function showResponse (response) {
+            RESPONSE = response;
+            if (this && this.url && (typeof(this.url) == "string")) {
+                var anchor = jQuery("#url");
+                anchor.text(this.url.toString());
+                anchor.attr('href', this.url.toString());
+            }
+            jQuery("#content").text(JSON.stringify(response, null, '  '));
+        }
 
 };
 
