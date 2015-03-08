@@ -1,4 +1,4 @@
-Searches = new Mongo.Collection("searches");
+
 
 function makeListItems(key, val) {
         var items = [];
@@ -20,7 +20,6 @@ function makeListItems(key, val) {
 
 if (Meteor.isClient) {
     var lender = "";
-    var q_text = "";
     Template.body.events({
         "submit .lenders": function (event) {
             // This function is called when the new task form is submitted
@@ -30,12 +29,12 @@ if (Meteor.isClient) {
             event.target.text.value = "";
         },
         "search .searchname": function(event) {
-            Searches.insert({q_text: event.taget.q.value});
+            Session.set("stringSearched", event.target.q.value);
+            console.log(event.target.name.value)
+            console.log("You are searching a for a name")
         }
         });
-    console.log(q_text)
-    
-    console.log(lender);
+
     var page = '';
     var loan_id = 'text';
 
@@ -73,15 +72,12 @@ if (Meteor.isClient) {
             });
     });
     
-
+    console.log(Session.get("stringSearched"))
     var search_url = 'http://api.kivaws.org/v1/lenders/search.json';
-    q_id = Searches.find()
-    Searches.remove({})
-    var query_params = { q: q_id,
+    var query_params = { q: Session.get("stringSearched"),
                         sort_by: "newest",
                         ids_only: "false"
                        };
-    console.log(q_text)
     var options = {
         data: query_params,
         type: "GET",
