@@ -18,13 +18,18 @@ function makeListItems(key, val) {
 	items.push('</ul></li>');
 	return items.join('');
 }
+function countryIndex(array, countryStr){
+	for(var i = 0; i < array.length; i++){
+		if(array[i][0] == countryStr) return i;
+	}
+	return -1;
+}
 var lenderID = "matt" 
 var lendersite = "http://api.kivaws.org/v1/lenders/" + lenderID+"/loans.json" //URL for lender JSON data
 $.getJSON(lendersite, function( data ){
 	var items = [];
 	var title="Loan";
 	items.push(makeListItems(title, data.loans));
-	var element = []; //Separate each line into a different element in an array
 	entries = items[0].split("<br>")
 	countries = [];
 	for (i=0;i<entries.length;i++) {
@@ -34,13 +39,18 @@ $.getJSON(lendersite, function( data ){
 			//document.write(entries[i] + "<br>") //debugging
 			row = entries[i].split(": ")
 			if (row[0]=="country"){
-				countries.push(row[1])
-				document.write(row[1] + "<br>")
+				var index = countryIndex(countries, row[1]);
+				if(index == -1){
+					countries.push([row[1], 1]);
+				}
+				else{
+					countries[index][1]++;
+				}
+				//document.write(row[1] + "<br>")
 			}
 		}
 	}
-	document.write("End of List")
-	
+	document.write(countries)
 	
 });
 
