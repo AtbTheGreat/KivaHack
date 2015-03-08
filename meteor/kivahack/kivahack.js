@@ -27,14 +27,13 @@ if (Meteor.isClient) {
         "submit .lenders": function (event) {
             // This function is called when the new task form is submitted
             lender = event.target.text.value;
-            
+            console.log(event.target.text.value);
+            console.log("Lenders")
             // Clear form
             event.target.text.value = "";
         },
         "submit .searchname": function(event) {
             Session.set("stringSearched", event.target.q.value);
-            console.log(event.target.q.value)
-            console.log("You are searching a for a name")
             search_url = 'http://api.kivaws.org/v1/lenders/search.json';
             query_params = { q: Session.get("stringSearched"),
                                 sort_by: "newest",
