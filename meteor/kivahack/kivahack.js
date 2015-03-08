@@ -20,6 +20,9 @@ function makeListItems(key, val) {
 
 if (Meteor.isClient) {
     var lender = "";
+    var search_url = "";
+    var options = {};
+    var query_params  = {};
     Template.body.events({
         "submit .lenders": function (event) {
             // This function is called when the new task form is submitted
@@ -28,10 +31,22 @@ if (Meteor.isClient) {
             // Clear form
             event.target.text.value = "";
         },
-        "search .searchname": function(event) {
+        "submit .searchname": function(event) {
             Session.set("stringSearched", event.target.q.value);
-            console.log(event.target.name.value)
+            console.log(event.target.q.value)
             console.log("You are searching a for a name")
+            search_url = 'http://api.kivaws.org/v1/lenders/search.json';
+            query_params = { q: Session.get("stringSearched"),
+                                sort_by: "newest",
+                                ids_only: "false"
+                                };
+            options = {
+                data: query_params,
+                type: "GET",
+                dataType: 'json'
+            }
+            request = jQuery.ajax(search_url, options).done(showResponse);
+            return false;
         }
         });
 
@@ -72,18 +87,8 @@ if (Meteor.isClient) {
             });
     });
     
-    console.log(Session.get("stringSearched"))
-    var search_url = 'http://api.kivaws.org/v1/lenders/search.json';
-    var query_params = { q: Session.get("stringSearched"),
-                        sort_by: "newest",
-                        ids_only: "false"
-                       };
-    var options = {
-        data: query_params,
-        type: "GET",
-        dataType: 'json'
-    }
-    var request = jQuery.ajax(search_url, options).done(showResponse);
+
+    
             function showResponse (response) {
             RESPONSE = response;
             if (this && this.url && (typeof(this.url) == "string")) {
