@@ -5,7 +5,7 @@
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
 
-var lendersList = [];
+var lendersList = [], idList = [];
 
 function makeListItems(key, val) {
 	// Function found through sample code.
@@ -67,7 +67,8 @@ $.getJSON(lendersite, function( data ){
 					else lenderWhere = row[1];
 				}
 				var str = lenderName+", "+lenderWhere+", "+lenderID;
-				if(str.indexOf("undefined") == -1 && indexWord(lendersList, str)==-1){
+				if(str.indexOf("undefined") == -1 && indexWord(idList, lenderID)==-1){
+					idList.push(lenderID);
 					lendersList.push(str);
 				}
 			}
