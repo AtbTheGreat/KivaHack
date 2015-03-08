@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+
+
+
+function makeListItems(key, val) {
+	// Function found through sample code.
+	var items = [];
+	items.push('<b>' + key + '</b><br>');
+	$.each(val, function(key, val) {
+		if (typeof(val) == 'object') {
+			items.push(makeListItems(key, val));
+		} else {
+			items.push(key + ': ' + val + '<br>');
+		}
+	});
+	items.push('</ul></li>');
+	return items.join('');
+}
+
+function indexCountry(array, row){
+	
+	for(var i = 0; i < array.length; i++){
+		if(array[i][0] == row) return i;
+	
+	}
+	
+	return -1;
+}
+
+var lenderID = "matt" 
+var lendersite = "http://api.kivaws.org/v1/lenders/" + lenderID+"/loans.json" //URL for lender JSON data
+
+// Making the getJSON method not asynchronous
+$.ajaxSetup({
+async: false
+});
+
+$.getJSON(lendersite, function( data ){
+	var items = [];
+	var title="Loan";
+	items.push(makeListItems(title, data.loans));
+	//document.write(items[0])
+//	var element = []; //Separate each line into a different element in an array
+	entries = items[0].split("<br>")
+	var countries = [['Country', 'Popularity']];
+	for (i=0;i<entries.length;i++) {
+	//document.write(entries[i]+'<br>');
+		if (entries[i].indexOf(": ") == -1) {
+		}
+		else {
+			//document.write(entries[i] + "<br>") //debugging
+			row = entries[i].split(": ")
+			if (row[0]=="country"){
+				var index = indexCountry(countries, row[1]);
+				if(index == -1) countries.push([row[1], 1]);
+				else countries[index][1]++;
+			}
+		}
+	} // end of for-loop
+	
+	// loading google geochart below
+		google.load("visualization", "1", {packages:["geochart"]});
+		google.setOnLoadCallback(drawRegionsMap);
+		function drawRegionsMap() {
+			var countryData = google.visualization.arrayToDataTable(countries);
+			var options = {};
+			var chart = new google.visualization.GeoChart(document.getElementById('regions_div'));
+			chart.draw(countryData, options);
+      }
+	  // end of loading google geochart stuff
+	}
+
+);
+
+
+</script>
+</head>
+<body>
+<div id="regions_div" style="width: 900px; height: 500px;"></div>
+</body>
+</html>
