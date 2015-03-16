@@ -1,25 +1,27 @@
 <head>
-    <script src="//use.typekit.net/nao2fkc.js"></script>
-    <script>try{Typekit.load();}catch(e){}</script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <title>kivahack</title>
+  <script src="//use.typekit.net/nao2fkc.js"></script>
+  <script>try{Typekit.load();}catch(e){}</script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script src="map.html"></script>
+  <script type="text/javascript" src="map.js"></script>
+  <title>kivahack</title>
 </head>
 
 <body>
-  <h1>kivahack!</h1>
-  {{> hello}}
+  <h1>kivahack!</h1> 
+    {{> hello}}
     {{#each results}}
-        {{> result}}
-      {{/each}}
-    {{ > map }}
+      {{> result}}
+    {{/each}}
+    {{> map }}
 </body>
 
 <template name="hello">
-    <form class="searchname">
-        <input type="search" name="q" placeholder="Search for Id" />
-    </form>
-    <div id="content">
-    </div>
+  <form class="searchname">
+    <input type="search" name="q" placeholder="Search for Id" />
+  </form>
+  <div id="content">
+  </div>
 </template>
 <template name="result">
   <li>{{data}}</li>
