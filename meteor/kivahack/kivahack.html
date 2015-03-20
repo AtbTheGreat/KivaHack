@@ -2,13 +2,13 @@
   <script src="//use.typekit.net/nao2fkc.js"></script>
   <script>try{Typekit.load();}catch(e){}</script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script src="map.html"></script>
+  <script src="maps.html"></script>
   <script type="text/javascript" src="map.js"></script>
   <title>kivahack</title>
 </head>
 
 <body>
-  <h1>kivahack!</h1> 
+  <h1>kivahack!</h1>
     {{> hello}}
     {{#each results}}
       {{> result}}
@@ -17,8 +17,8 @@
 </body>
 
 <template name="hello">
-  <form class="searchname">
-    <input type="search" name="q" placeholder="Search for Id" />
+  <form >
+    <input type="text" name="text" placeholder="Search for Id" class="searchname"/>
   </form>
   <div id="content">
   </div>
