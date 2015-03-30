@@ -9,7 +9,7 @@ if (Meteor.isClient) {
 
   Template.body.helpers({
     results: function () {
-      return Results.find({});
+      return Session.get("searchArray");
     }
   })
   Template.hello.events({
@@ -28,33 +28,39 @@ if (Meteor.isClient) {
         dataType: 'json'
       }
 
-      console.log("starting search call")
       request = $.ajax(search_url, options)
       request.done(showResponse);
 
-      console.log("finished both search call")
+
       return false;
     }
   });
+  Template.result.events({
+    "click li": function(event) {
+      console.log(this.lender_id + "has been clicked");
+      mapFunction(this.lender_id)
+    }
+  })
 
   var page = '';
   var loan_id = 'text';
+  var lender_arr = []
 
 
 
   function showResponse(response) {
     RESPONSE = response;
-    var list = Results.find({})
-    console.log(list.Collection)
-    $.each (list.Collection, function(i, data) {
-      console.log(data)
-      Results.remove(this._id)
-    })
+
 
     $.each(response.lenders, function(i, lenderData) {
-      Results.insert({lender_id: lenderData.lender_id, data: lenderData.name+", "+lenderData.whereabouts})
-    });
+      //Results.insert({lender_id: lenderData.lender_id, data: lenderData.name+", "+lenderData.whereabouts})
+      if (i < 50) {
+        lender_arr[i] = {lender_id: lenderData.lender_id, data: lenderData.name+", "+lenderData.whereabouts}
+      }
+      Session.set("searchArray", lender_arr)
 
+    });
+    console.log(lender_arr);
   }
 
 };
