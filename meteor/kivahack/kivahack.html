@@ -2,11 +2,9 @@
   <script src="//use.typekit.net/nao2fkc.js"></script>
   <script>try{Typekit.load();}catch(e){}</script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script src="maps.html"></script>
-  <script type="text/javascript" src="map.js"></script>
+
   <title>kivahack</title>
 </head>
-
 <body>
   <h1>kivahack!</h1>
     {{> hello}}
@@ -25,4 +23,8 @@
 </template>
 <template name="result">
   <li>{{this.data}}</li>
+</template>
+<template name="map">
+    <div id="content"></div>
+    <div id="regions_div"></div>
 </template>
