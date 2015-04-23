@@ -102,22 +102,7 @@ if (Meteor.isClient) {
   function mapFunction(lender_ID) {
     console.log("Made it to the mapFunction " + lender_ID)
     lendersite = "http://api.kivaws.org/v1/lenders/" + lender_ID + "/loans.json" //URL for lender JSON data
-    $.ajax({
-      complete: function () {
-        // loading google geochart below
-        google.load("visualization", "1", {
-          packages: ["geomap"]
-        });
-        google.setOnLoadCallback(drawRegionsMap);
 
-
-        // end of loading google geochart stuff
-
-        // display loan information
-
-      }
-    })
-    .done(function (data) {
       $.getJSON(lendersite, function (data) {
         var items = [];
         var title = "Loan";
@@ -144,9 +129,13 @@ if (Meteor.isClient) {
           }
         } // end of for-loop
         document.write("<b>Total Loaned</b>: $" + loanTotal + "<br /><b>Number of Loans</b>: " + data.loans.length + "<br /><b>Average of Loans</b>: $" + Math.round(100 * loanTotal / data.loans.length) / 100 + "<br />");
+      }).done(drawRegionsMap());
+      google.load("visualization", "1", {
+        packages: ["geomap"]
       });
+      google.setOnLoadCallback(drawRegionsMap);
 
-    });
+
 
   }
 
